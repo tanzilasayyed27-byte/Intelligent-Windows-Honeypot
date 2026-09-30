@@ -1,0 +1,44 @@
+[
+    {
+        "timestamp": "2026-09-27T13:06:05.140809",
+        "source_ip": "127.0.0.1",
+        "target_port": 2222,
+        "service": "Fake SSH",
+        "event": "connection_attempt"
+    },
+    {
+        "timestamp": "2026-09-27T13:08:18.489451",
+        "source_ip": "127.0.0.1",
+        "target_port": 2323,
+        "service": "Fake Telnet",
+        "event": "connection_attempt"
+    },
+    {
+        "timestamp": "2026-09-27T13:08:37.658382",
+        "source_ip": "127.0.0.1",
+        "target_port": 8080,
+        "service": "Fake HTTP",
+        "event": "connection_attempt"
+    },
+    {
+        "timestamp": "2026-09-27T13:14:22.523877",
+        "source_ip": "127.0.0.1",
+        "target_port": 2222,
+        "service": "Fake SSH",
+        "event": "connection_attempt"
+    },
+    {
+        "timestamp": "2026-09-27T13:14:42.970900",
+        "source_ip": "127.0.0.1",
+        "target_port": 2222,
+        "service": "Fake SSH",
+        "event": "connection_attempt"
+    },
+    {
+        "timestamp": "2026-09-27T13:17:52.891049",
+        "source_ip": "127.0.0.1",
+        "target_port": 2222,
+        "service": "Fake SSH",
+        "event": "connection_attempt"
+    }
+]

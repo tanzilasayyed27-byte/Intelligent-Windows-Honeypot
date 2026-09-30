@@ -1,0 +1,65 @@
+[
+    {
+        "timestamp": "2026-09-27T13:30:22.039595",
+        "source_ip": "127.0.0.1",
+        "target_port": 2222,
+        "service": "Fake SSH",
+        "event": "connection_attempt",
+        "status": "NORMAL",
+        "attempt_count": 1
+    },
+    {
+        "timestamp": "2026-09-27T13:30:22.624102",
+        "source_ip": "127.0.0.1",
+        "target_port": 2222,
+        "service": "Fake SSH",
+        "event": "connection_attempt",
+        "status": "NORMAL",
+        "attempt_count": 2
+    },
+    {
+        "timestamp": "2026-09-27T13:30:23.152814",
+        "source_ip": "127.0.0.1",
+        "target_port": 2222,
+        "service": "Fake SSH",
+        "event": "connection_attempt",
+        "status": "NORMAL",
+        "attempt_count": 3
+    },
+    {
+        "timestamp": "2026-09-27T13:30:23.666533",
+        "source_ip": "127.0.0.1",
+        "target_port": 2222,
+        "service": "Fake SSH",
+        "event": "connection_attempt",
+        "status": "NORMAL",
+        "attempt_count": 4
+    },
+    {
+        "timestamp": "2026-09-27T13:30:24.192099",
+        "source_ip": "127.0.0.1",
+        "target_port": 2222,
+        "service": "Fake SSH",
+        "event": "connection_attempt",
+        "status": "SUSPICIOUS",
+        "attempt_count": 5
+    },
+    {
+        "timestamp": "2026-09-27T15:30:28.473307",
+        "source_ip": "127.0.0.1",
+        "target_port": 2323,
+        "service": "Fake Telnet",
+        "event": "connection_attempt",
+        "status": "NORMAL",
+        "attempt_count": 1
+    },
+    {
+        "timestamp": "2026-09-30T13:37:38.379330",
+        "source_ip": "127.0.0.1",
+        "target_port": 2323,
+        "service": "Fake Telnet",
+        "event": "connection_attempt",
+        "status": "NORMAL",
+        "attempt_count": 1
+    }
+]

@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Honeypot Security Operations Center</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: "Consolas", "Courier New", monospace;
+            background:
+                radial-gradient(circle at top, #300000 0%, #100000 35%, #050505 75%);
+            color: #f5f5f5;
+            min-height: 100vh;
+        }
+
+        /* TOP NAVIGATION */
+
+        .topbar {
+            height: 70px;
+            background: #080808;
+            border-bottom: 1px solid #ff1a1a;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 35px;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.25);
+        }
+
+        .logo {
+            color: #ff1a1a;
+            font-size: 22px;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+
+        .system-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #ff4d4d;
+            font-size: 13px;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            background: #ff1a1a;
+            border-radius: 50%;
+            box-shadow: 0 0 12px #ff1a1a;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                opacity: 1;
+                box-shadow: 0 0 5px #ff1a1a;
+            }
+
+            50% {
+                opacity: 0.4;
+                box-shadow: 0 0 20px #ff1a1a;
+            }
+
+            100% {
+                opacity: 1;
+                box-shadow: 0 0 5px #ff1a1a;
+            }
+        }
+
+        /* MAIN CONTAINER */
+
+        .container {
+            max-width: 1500px;
+            margin: auto;
+            padding: 30px;
+        }
+
+        .header {
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            margin: 0;
+            color: #ff2020;
+            font-size: 34px;
+            letter-spacing: 3px;
+            text-shadow: 0 0 15px rgba(255, 0, 0, 0.6);
+        }
+
+        .header p {
+            color: #999;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+
+        .terminal-line {
+            color: #ff3333;
+            margin-top: 15px;
+            font-size: 13px;
+        }
+
+        .terminal-line span {
+            color: #777;
+        }
+
+        /* ALERT BANNER */
+
+        .alert-banner {
+            background: linear-gradient(
+                90deg,
+                rgba(100, 0, 0, 0.7),
+                rgba(30, 0, 0, 0.9)
+            );
+
+            border: 1px solid #ff1a1a;
+            border-left: 5px solid #ff1a1a;
+
+            padding: 18px 20px;
+            margin-bottom: 25px;
+
+            box-shadow:
+                0 0 15px rgba(255, 0, 0, 0.2),
+                inset 0 0 20px rgba(255, 0, 0, 0.05);
+        }
+
+        .alert-title {
+            color: #ff2020;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .alert-text {
+            color: #bbb;
+            font-size: 12px;
+            margin-top: 7px;
+        }
+
+        /* STAT CARDS */
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .card {
+            background: rgba(15, 15, 15, 0.95);
+            border: 1px solid #3b1111;
+            border-top: 3px solid #ff1a1a;
+            padding: 22px;
+            min-height: 145px;
+
+            box-shadow:
+                0 0 15px rgba(255, 0, 0, 0.08);
+
+            transition: 0.25s;
+        }
+
+        .card:hover {
+            border-color: #ff1a1a;
+            box-shadow:
+                0 0 25px rgba(255, 0, 0, 0.25);
+            transform: translateY(-2px);
+        }
+
+        .card-title {
+            color: #888;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .card-value {
+            font-size: 42px;
+            font-weight: bold;
+            margin-top: 15px;
+            color: #eee;
+        }
+
+        .card-normal {
+            border-top-color: #00ff66;
+        }
+
+        .card-normal .card-value {
+            color: #00ff66;
+            text-shadow: 0 0 10px rgba(0, 255, 100, 0.4);
+        }
+
+        .card-danger {
+            border-top-color: #ff1a1a;
+        }
+
+        .card-danger .card-value {
+            color: #ff2020;
+            text-shadow: 0 0 12px rgba(255, 0, 0, 0.6);
+        }
+
+        .card-info {
+            border-top-color: #ff3333;
+        }
+
+        /* SECTIONS */
+
+        .section {
+            background: rgba(10, 10, 10, 0.96);
+            border: 1px solid #321010;
+            margin-bottom: 25px;
+            padding: 22px;
+
+            box-shadow:
+                0 0 18px rgba(255, 0, 0, 0.06);
+        }
+
+        .section-title {
+            color: #ff3333;
+            font-size: 17px;
+            margin: 0 0 20px 0;
+            letter-spacing: 1px;
+            border-bottom: 1px solid #351010;
+            padding-bottom: 12px;
+        }
+
+        .section-title::before {
+            content: "[+] ";
+            color: #ff1a1a;
+        }
+
+        /* SERVICES */
+
+        .service-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .service {
+            background: #160707;
+            border: 1px solid #551111;
+            border-left: 3px solid #ff1a1a;
+            padding: 15px 22px;
+            min-width: 180px;
+        }
+
+        .service-name {
+            color: #ff3333;
+            font-weight: bold;
+        }
+
+        .service-count {
+            color: #aaa;
+            margin-top: 7px;
+            font-size: 12px;
+        }
+
+        /* TABLE */
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+
+        th {
+            text-align: left;
+            color: #ff4d4d;
+            background: #170707;
+            padding: 14px 10px;
+            border-bottom: 1px solid #661111;
+            text-transform: uppercase;
+        }
+
+        td {
+            padding: 13px 10px;
+            border-bottom: 1px solid #241010;
+            color: #bbb;
+        }
+
+        tr:hover {
+            background: rgba(255, 0, 0, 0.05);
+        }
+
+        .status-normal {
+            color: #00ff66;
+            font-weight: bold;
+        }
+
+        .status-suspicious {
+            color: #ff2020;
+            font-weight: bold;
+            text-shadow: 0 0 8px rgba(255, 0, 0, 0.5);
+        }
+
+        /* TERMINAL BOX */
+
+        .terminal {
+            background: #020202;
+            border: 1px solid #3a1010;
+            padding: 18px;
+            color: #777;
+            font-size: 12px;
+            line-height: 1.8;
+        }
+
+        .terminal .red {
+            color: #ff2222;
+        }
+
+        .terminal .green {
+            color: #00ff66;
+        }
+
+        /* FOOTER */
+
+        footer {
+            text-align: center;
+            padding: 25px;
+            color: #555;
+            font-size: 11px;
+            border-top: 1px solid #220909;
+            margin-top: 20px;
+        }
+
+        footer span {
+            color: #ff2222;
+        }
+
+        /* RESPONSIVE */
+
+        @media (max-width: 1000px) {
+            .cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
+
+            .topbar {
+                padding: 0 15px;
+            }
+
+            .logo {
+                font-size: 15px;
+            }
+
+            .container {
+                padding: 15px;
+            }
+
+            .cards {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <!-- TOP BAR -->
+
+    <div class="topbar">
+
+        <div class="logo">
+            // HONEYPOT_SOC
+        </div>
+
+        <div class="system-status">
+            <div class="status-dot"></div>
+            SYSTEM MONITORING ACTIVE
+        </div>
+
+    </div>
+
+
+    <div class="container">
+
+        <!-- HEADER -->
+
+        <div class="header">
+
+            <h1>INTELLIGENT WINDOWS HONEYPOT</h1>
+
+            <p>
+                Real-Time Attack Detection & Threat Intelligence Monitoring
+            </p>
+
+            <div class="terminal-line">
+                <span>root@honeypot:~$</span>
+                monitoring localhost security events...
+            </div>
+
+        </div>
+
+
+        <!-- ALERT -->
+
+        {% if suspicious_events > 0 %}
+
+        <div class="alert-banner">
+
+            <div class="alert-title">
+                ⚠ SECURITY ALERT — SUSPICIOUS ACTIVITY DETECTED
+            </div>
+
+            <div class="alert-text">
+                {{ suspicious_events }} suspicious security event(s)
+                detected by the honeypot detection engine.
+            </div>
+
+        </div>
+
+        {% else %}
+
+        <div class="alert-banner">
+
+            <div class="alert-title">
+                ✓ SYSTEM STATUS — NO ACTIVE THREATS
+            </div>
+
+            <div class="alert-text">
+                Honeypot monitoring is active and waiting for connection activity.
+            </div>
+
+        </div>
+
+        {% endif %}
+
+
+        <!-- STATISTICS -->
+
+        <div class="cards">
+
+            <div class="card card-info">
+
+                <div class="card-title">
+                    Total Security Events
+                </div>
+
+                <div class="card-value">
+                    {{ total_events }}
+                </div>
+
+            </div>
+
+
+            <div class="card card-normal">
+
+                <div class="card-title">
+                    Normal Events
+                </div>
+
+                <div class="card-value">
+                    {{ normal_events }}
+                </div>
+
+            </div>
+
+
+            <div class="card card-danger">
+
+                <div class="card-title">
+                    Suspicious Events
+                </div>
+
+                <div class="card-value">
+                    {{ suspicious_events }}
+                </div>
+
+            </div>
+
+
+            <div class="card card-info">
+
+                <div class="card-title">
+                    Unique Source IPs
+                </div>
+
+                <div class="card-value">
+                    {{ unique_ips }}
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- SERVICES -->
+
+        <div class="section">
+
+            <h2 class="section-title">
+                MONITORED DECOY SERVICES
+            </h2>
+
+            <div class="service-list">
+
+                {% for service, count in services.items() %}
+
+                <div class="service">
+
+                    <div class="service-name">
+                        ● {{ service }}
+                    </div>
+
+                    <div class="service-count">
+                        {{ count }} connection(s) detected
+                    </div>
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+
+        <!-- EVENTS -->
+
+        <div class="section">
+
+            <h2 class="section-title">
+                RECENT SECURITY EVENTS
+            </h2>
+
+            <div class="table-wrapper">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Timestamp</th>
+                            <th>Source IP</th>
+                            <th>Target Port</th>
+                            <th>Service</th>
+                            <th>Status</th>
+                            <th>Attempts</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        {% for event in events %}
+
+                        <tr>
+
+                            <td>
+                                {{ event.timestamp }}
+                            </td>
+
+                            <td>
+                                {{ event.source_ip }}
+                            </td>
+
+                            <td>
+                                {{ event.target_port }}
+                            </td>
+
+                            <td>
+                                {{ event.service }}
+                            </td>
+
+                            <td>
+
+                                {% if event.status == "SUSPICIOUS" %}
+
+                                <span class="status-suspicious">
+                                    ⚠ SUSPICIOUS
+                                </span>
+
+                                {% else %}
+
+                                <span class="status-normal">
+                                    ✓ NORMAL
+                                </span>
+
+                                {% endif %}
+
+                            </td>
+
+                            <td>
+                                {{ event.attempt_count }}
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+
+        <!-- TERMINAL / SYSTEM INFORMATION -->
+
+        <div class="section">
+
+            <h2 class="section-title">
+                HONEYPOT ENGINE STATUS
+            </h2>
+
+            <div class="terminal">
+
+                <div>
+                    <span class="red">[HONEYPOT]</span>
+                    Windows deception environment initialized
+                </div>
+
+                <div>
+                    <span class="green">[DETECTOR]</span>
+                    Connection monitoring engine: ACTIVE
+                </div>
+
+                <div>
+                    <span class="green">[LOGGER]</span>
+                    JSON security event logging: ACTIVE
+                </div>
+
+                <div>
+                    <span class="green">[DASHBOARD]</span>
+                    Flask monitoring interface: ACTIVE
+                </div>
+
+                <div>
+                    <span class="red">[ALERT ENGINE]</span>
+                    Suspicious threshold: 5 attempts
+                </div>
+
+                <div>
+                    <span class="red">[NETWORK]</span>
+                    Listening environment: 127.0.0.1
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- FOOTER -->
+
+    <footer>
+
+        INTELLIGENT WINDOWS HONEYPOT
+        <span>•</span>
+        Cybersecurity Monitoring Project
+        <span>•</span>
+        Local Authorized Lab
+
+    </footer>
+
+
+    <!-- AUTO REFRESH EVERY 2 SECONDS -->
+
+    <script>
+
+        setInterval(function () {
+
+            window.location.reload();
+
+        }, 2000);
+
+    </script>
+
+
+</body>
+
+</html>
